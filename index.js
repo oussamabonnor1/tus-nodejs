@@ -1,30 +1,27 @@
-// const { Server } = require('@tus/server')
-// const { FileStore } = require('@tus/file-store')
+const fastify = require('fastify')({ logger: true });
+const { Server } = require('@tus/server');
+const { FileStore } = require('@tus/file-store');
 
-// const host = '127.0.0.1'
-// const port = 4000
-// const server = new Server({
-//     path: '/files',
-//     datastore: new FileStore({ directory: './files' }),
-// })
-// server.listen({ host, port })
-const http = require('http');
-const express = require("express")
-
-const port = 4000;
-const app_name = "app1"
-
-
-const app = express()
-app.get("/", (req, res, nex) => {
-    res.json({ app: app_name })
+const tusServer = new Server({
+    path: '/files',
+    datastore: new FileStore({ directory: './files' })
 })
 
-const server = http.createServer(app);
-server.listen(port, () => {
-
-    setInterval(() => {
-        console.log(`${app_name} : ${new Date().toISOString()}`);
-    }, 1000)
+fastify.addContentTypeParser(
+    'application/offset+octet-stream', (request, payload, done) => done(null)
+);
+fastify.all('/files', (req, res) => {
+    tusServer.handle(req.raw, res.raw);
 });
-
+fastify.all('/files/*', (req, res) => {
+    tusServer.handle(req.raw, res.raw);
+});
+fastify.all('/', (req, res) => {
+    res.send({ "hello": "world" })
+});
+fastify.listen(4000, (err) => {
+    if (err) {
+        fastify.log.error(err);
+        process.exit(1);
+    }
+});
