@@ -11,7 +11,7 @@ const app = express();
 // Set up tus server
 const tusServer = new Server({
     path: '/files',
-    datastore: new FileStore({ directory: './files' }) // Directory to store uploaded files
+    datastore: new FileStore({ directory: '/files' }) // Directory to store uploaded files
 });
 
 // Middleware to handle tus uploads
@@ -31,7 +31,4 @@ const server = http.createServer(app);
 server.listen(port, () => {
     console.log(`${app_name} is running on http://localhost:${port}`);
 
-    setInterval(() => {
-        console.log(`${app_name} : ${new Date().toISOString()}`);
-    }, 1000);
 });
