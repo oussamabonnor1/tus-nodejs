@@ -2,8 +2,6 @@
 .eslintcache
 dist
 .turbo
-*.tsbuildinfo
-output/
 
 # Yarn
 .pnp.*
