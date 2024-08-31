@@ -1,27 +1,37 @@
-const fastify = require('fastify')({ logger: true });
+const http = require('http');
+const express = require("express");
 const { Server } = require('@tus/server');
 const { FileStore } = require('@tus/file-store');
 
+const port = 4000;
+const app_name = "app1";
+
+const app = express();
+
+// Set up tus server
 const tusServer = new Server({
     path: '/files',
-    datastore: new FileStore({ directory: './files' })
-})
+    datastore: new FileStore({ directory: './files' }) // Directory to store uploaded files
+});
 
-fastify.addContentTypeParser(
-    'application/offset+octet-stream', (request, payload, done) => done(null)
-);
-fastify.all('/files', (req, res) => {
-    tusServer.handle(req.raw, res.raw);
+// Middleware to handle tus uploads
+app.all('/files', (req, res) => {
+    tusServer.handle(req, res);
 });
-fastify.all('/files/*', (req, res) => {
-    tusServer.handle(req.raw, res.raw);
+
+app.all('/files/*', (req, res) => {
+    tusServer.handle(req, res);
 });
-fastify.all('/', (req, res) => {
-    res.send({ "hello": "world" })
+
+app.get("/", (req, res) => {
+    res.json({ "hello": "world" });
 });
-fastify.listen(4000, (err) => {
-    if (err) {
-        fastify.log.error(err);
-        process.exit(1);
-    }
+
+const server = http.createServer(app);
+server.listen(port, () => {
+    console.log(`${app_name} is running on http://localhost:${port}`);
+
+    setInterval(() => {
+        console.log(`${app_name} : ${new Date().toISOString()}`);
+    }, 1000);
 });
