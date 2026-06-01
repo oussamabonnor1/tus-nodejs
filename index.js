@@ -13,6 +13,7 @@ const app = express();
 // Set up tus server
 const tusServer = new Server({
     path: '/files',
+    respectForwardedHeaders: true,
     datastore: new FileStore({ directory: LOCAL_STORAGE_PATH }) // Directory to store uploaded files
 });
 
