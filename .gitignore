@@ -55,3 +55,6 @@ test/output
 
 # Keyfile will be decrypted from keyfile.json.enc by GitHub Actions
 keyfile.json
+
+# Loca storage
+storage/*

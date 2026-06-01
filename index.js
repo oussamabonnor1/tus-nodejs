@@ -3,15 +3,17 @@ const express = require("express");
 const { Server } = require('@tus/server');
 const { FileStore } = require('@tus/file-store');
 
-const port = 4000;
-const app_name = "app1";
+require('dotenv').config();
+const PORT = process.env.PORT || 4000;
+const APP_NAME = process.env.APP_NAME || "app1";
+const LOCAL_STORAGE_PATH = process.env.LOCAL_STORAGE_PATH || './storage';
 
 const app = express();
 
 // Set up tus server
 const tusServer = new Server({
     path: '/files',
-    datastore: new FileStore({ directory: '/files' }) // Directory to store uploaded files
+    datastore: new FileStore({ directory: LOCAL_STORAGE_PATH }) // Directory to store uploaded files
 });
 
 // Middleware to handle tus uploads
@@ -28,7 +30,7 @@ app.get("/", (req, res) => {
 });
 
 const server = http.createServer(app);
-server.listen(port, () => {
-    console.log(`${app_name} is running on http://localhost:${port}`);
+server.listen(PORT, () => {
+    console.log(`${APP_NAME} is running on http://localhost:${PORT}`);
 
 });
